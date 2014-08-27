@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by macbury on 27.08.14.
  */
 public class RainData {
-  private int volume;
+  private float volume;
   private Date at;
 
   public RainData() {
@@ -26,11 +26,11 @@ public class RainData {
     at.setTime((long)t*1000);
   }
 
-  public int getVolume() {
+  public float getVolume() {
     return volume;
   }
 
-  public void setVolume(int volume) {
+  public void setVolume(float volume) {
     this.volume = volume;
   }
 

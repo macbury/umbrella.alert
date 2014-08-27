@@ -70,7 +70,7 @@ public class ForecastProvider {
       Log.e(TAG, "forecast not found!");
       error(new ForecastProviderError("Forecast not found"));
     } else {
-      Log.i(TAG, "Retrived forecast data: " + forecast.toString());
+      Log.v(TAG, "Retrived forecast data: " + forecast.toString());
       currentForecast = new Forecast();
       currentForecast.parse(forecast);
       success();
@@ -84,6 +84,7 @@ public class ForecastProvider {
   }
 
   private void error(ForecastProviderError error) {
+    running = false;
     Log.e(TAG, error.getMessage());
     listener.onForecastError(this, error);
     complete();
@@ -103,5 +104,9 @@ public class ForecastProvider {
 
   public void setListener(ForecastProviderListener listener) {
     this.listener = listener;
+  }
+
+  public boolean isRunning() {
+    return running;
   }
 }

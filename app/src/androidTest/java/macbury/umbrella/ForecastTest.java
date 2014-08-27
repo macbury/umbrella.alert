@@ -26,6 +26,13 @@ public class ForecastTest extends TestCase {
   public void testItShouldTakeUmbrellaIfThereIsAnyChanceOfRainInNext6Hrs() {
     Forecast forecast = new Forecast();
     forecast.parse(WeatherForecastFactory.rainNext6Hours());
-    assertEquals(true, forecast.takeUmbrella());
+    assertTrue(forecast.takeUmbrella());
+  }
+
+  public void testItShouldNotTakeUmbrellaIfThereIsNoChanceOfRainInNext6Hrs() {
+    Forecast forecast = new Forecast();
+    forecast.parse(WeatherForecastFactory.notRainNext6Hours());
+    assertEquals(0, forecast.getTotalRainVolume());
+    assertFalse(forecast.takeUmbrella());
   }
 }
