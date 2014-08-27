@@ -12,14 +12,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Toast;
 
 import macbury.umbrella.R;
 import macbury.umbrella.UmbrellaApplication;
+import macbury.umbrella.fragments.ForecastFragment;
 import macbury.umbrella.fragments.LoadingFragment;
 import macbury.umbrella.managers.IntentsManager;
 import macbury.umbrella.model.Forecast;
+import macbury.umbrella.receiver.SyncStatusBroadcastReceiver;
+import macbury.umbrella.service.CheckWeatherService;
 
 public class ForecastActivity extends Activity {
+  private static final String TAG = "ForecastActivity";
   private UmbrellaApplication app;
   private Forecast currentForecast;
 
@@ -33,23 +38,26 @@ public class ForecastActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
-    Intent intent = getIntent();
+    onIntentCallback(getIntent());
+    registerReceiver(syncReceiver, app.intents.syncBroadcastFilter());
+  }
 
+  @Override
+  protected void onPause() {
+    super.onPause();
+    unregisterReceiver(syncReceiver);
+  }
+
+  private void onIntentCallback(Intent intent) {
     currentForecast = app.store.getForecast();
 
     if (currentForecast == null || currentForecast.isNotFresh()) {
-      app.services.checkWeather();
-      startLoading();
+      app.services.checkWeather(false);
     } else {
-      
-    }
-
-    if (intent != null && intent.getBooleanExtra(IntentsManager.EXTRA_DISSMIS_TAKE_UMBRELLA, false)) {
+      showForecast();
       app.store.setUmbrellaNotificationDismissed(true);
       app.notifications.hideTakeUmbrella();
     }
-
-
   }
 
   @Override
@@ -62,7 +70,7 @@ public class ForecastActivity extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     if (id == R.id.action_refresh) {
-      app.services.checkWeather();
+      app.services.checkWeather(true);
       return true;
     }
     return super.onOptionsItemSelected(item);
@@ -78,19 +86,30 @@ public class ForecastActivity extends Activity {
 
   }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
-            return rootView;
-        }
+  private void showForecast() {
+    ForecastFragment forecastFragment = (ForecastFragment)getFragmentManager().findFragmentById(R.id.forecast_fragment);
+    if (forecastFragment == null) {
+      forecastFragment = new ForecastFragment();
     }
+
+    getFragmentManager().beginTransaction()
+            .replace(R.id.container, forecastFragment)
+            .commit();
+  }
+
+  SyncStatusBroadcastReceiver syncReceiver = new SyncStatusBroadcastReceiver() {
+    @Override
+    public void onSyncStatus(CheckWeatherService.SyncStatus status) {
+      if (status == CheckWeatherService.SyncStatus.Started) {
+        startLoading();
+      } else if(status == CheckWeatherService.SyncStatus.Error) {
+        Log.e(TAG, "Status: " + status);
+        Toast.makeText(ForecastActivity.this, "Could not fetch data...", 2000);
+      } else {
+        showForecast();
+      }
+    }
+  };
+
+
 }

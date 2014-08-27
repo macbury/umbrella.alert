@@ -14,8 +14,8 @@ public class ServicesManager {
     this.application = application;
   }
 
-  public void checkWeather() {
+  public void checkWeather(boolean forceRefresh) {
     Log.i(TAG, "Start check weather service");
-    application.startService(application.intents.checkWeatherService());
+    application.startService(application.intents.checkWeatherService(forceRefresh));
   }
 }

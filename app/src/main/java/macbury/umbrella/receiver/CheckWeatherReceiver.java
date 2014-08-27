@@ -17,6 +17,6 @@ public class CheckWeatherReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     Log.i(TAG, "Recived trigger from: " + intent.getAction());
     UmbrellaApplication application = (UmbrellaApplication)context.getApplicationContext();
-    application.services.checkWeather();
+    application.services.checkWeather(false);
   }
 }

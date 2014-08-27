@@ -25,6 +25,6 @@ public class AlarmsManager {
 
   public void setup() {
     Log.i(TAG, "Setup alarms");
-    manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, AlarmManager.INTERVAL_HOUR, application.intents.checkWeatherReceiver());
+    manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_HOUR, AlarmManager.INTERVAL_HALF_DAY, application.intents.checkWeatherReceiver());
   }
 }

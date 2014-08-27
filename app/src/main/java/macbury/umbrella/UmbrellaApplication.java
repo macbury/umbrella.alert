@@ -29,6 +29,6 @@ public class UmbrellaApplication extends Application {
     notifications = new NotificationsManager(this);
 
     alarms.setup();
-    services.checkWeather();
+    services.checkWeather(false);
   }
 }
