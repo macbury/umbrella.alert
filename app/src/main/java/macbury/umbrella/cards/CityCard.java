@@ -36,6 +36,7 @@ public class CityCard extends Card {
     cityTextView          = query.id(R.id.cityTextView).getTextView();
     temperatureTextView   = query.id(R.id.temperatureTextView).getTextView();
 
+
     query.id(R.id.cityTextView).text(forecast.getCity());
     query.id(R.id.temperatureTextView).text("0 " + DEGREES_SYMBOL + "C");
 

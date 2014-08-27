@@ -59,9 +59,16 @@ public class PrecipitationCard extends CardWithList {
   public View setupChildView(int i, ListObject listObject, View view, ViewGroup viewGroup) {
     AQuery query                  = new AQuery(view);
     PrecipitationListObject item  = (PrecipitationListObject)listObject;
-    SimpleDateFormat format       = new SimpleDateFormat("hh:mm");
+    SimpleDateFormat format       = new SimpleDateFormat("hh:mm a");
     query.id(R.id.timeTextView).text(format.format(item.data.getAt()));
     query.id(R.id.humidityTextView).text("Humidity: "+ item.data.getHumidity()+" %");
+
+    if (item.data.isRaining()) {
+      query.id(R.id.weatherImageView).image(R.drawable.status_raining);
+    } else {
+      query.id(R.id.weatherImageView).image(R.drawable.status_sun);
+    }
+
     return view;
   }
 

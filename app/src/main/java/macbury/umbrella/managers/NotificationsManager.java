@@ -40,6 +40,7 @@ public class NotificationsManager {
     mBuilder.setLights(NOTIFICATION_COLOR, 500, 100);
     mBuilder.setSound(notificationSound);
     mBuilder.setAutoCancel(true);
+    mBuilder.setSmallIcon(R.drawable.ic_stat_umbrella);
     mBuilder.setContentIntent(app.intents.showMainActivity(true));
     mBuilder.setDeleteIntent(app.intents.dismissTakeUmbrellaNotificationReceiver());
 
