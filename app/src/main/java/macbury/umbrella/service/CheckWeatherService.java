@@ -49,7 +49,9 @@ public class CheckWeatherService extends Service implements ForecastProviderList
 
     Forecast storedForecast = app.store.getForecast();
 
-    if (storedForecast == null || !storedForecast.isFresh() || intent.getBooleanExtra(IntentsManager.EXTRA_FORCE_REFRESH, false)) {
+    boolean forceRefresh = intent.getBooleanExtra(IntentsManager.EXTRA_FORCE_REFRESH, false);
+
+    if (storedForecast == null || !storedForecast.isFresh() || forceRefresh) {
       Log.i(TAG, "Starting fetch: " + intent.getAction());
       forecastProvider.fetch();
     } else if(!forecastProvider.isRunning()) {
@@ -87,8 +89,8 @@ public class CheckWeatherService extends Service implements ForecastProviderList
       app.notifications.showTakeUmbrella();
     } else {
       app.notifications.hideTakeUmbrella();
-      app.store.setUmbrellaNotificationDismissed(false);
     }
+    app.store.setUmbrellaNotificationDismissed(false);
   }
 
   @Override

@@ -3,6 +3,7 @@ package macbury.umbrella.activity;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,17 +39,8 @@ public class ForecastActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
-    onIntentCallback(getIntent());
     registerReceiver(syncReceiver, app.intents.syncBroadcastFilter());
-  }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    unregisterReceiver(syncReceiver);
-  }
-
-  private void onIntentCallback(Intent intent) {
     currentForecast = app.store.getForecast();
 
     if (currentForecast == null || currentForecast.isNotFresh()) {
@@ -59,6 +51,13 @@ public class ForecastActivity extends Activity {
       app.notifications.hideTakeUmbrella();
     }
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    unregisterReceiver(syncReceiver);
+  }
+
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -80,6 +79,7 @@ public class ForecastActivity extends Activity {
     Fragment loadingFragment = getFragmentManager().findFragmentById(R.id.frame_loading);
     if (loadingFragment == null) {
       getFragmentManager().beginTransaction()
+              .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
               .replace(R.id.container, new LoadingFragment())
               .commit();
     }
@@ -93,8 +93,10 @@ public class ForecastActivity extends Activity {
     }
 
     getFragmentManager().beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .replace(R.id.container, forecastFragment)
             .commit();
+    forecastFragment.loadForecast();
   }
 
   SyncStatusBroadcastReceiver syncReceiver = new SyncStatusBroadcastReceiver() {

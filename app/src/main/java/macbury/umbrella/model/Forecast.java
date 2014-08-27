@@ -18,7 +18,6 @@ public class Forecast {
   private Date toDate;
   private String city;
   private float totalRainVolume;
-  private boolean notFresh;
 
   public Forecast() {
     data = new ArrayList<RainData>();
@@ -94,7 +93,7 @@ public class Forecast {
 
   public boolean isFresh() {
     Date currentDate = new Date();
-    return fromDate.after(currentDate) && toDate.before(currentDate);
+    return currentDate.after(fromDate) && currentDate.before(toDate);
   }
 
   public boolean isNotFresh() {
