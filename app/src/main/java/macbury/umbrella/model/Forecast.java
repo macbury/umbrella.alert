@@ -16,6 +16,7 @@ public class Forecast {
   private ArrayList<RainData> data;
   private Date fromDate;
   private Date toDate;
+  private Date lastUpdate;
   private String city;
   private float totalRainVolume;
 
@@ -28,6 +29,7 @@ public class Forecast {
     totalRainVolume = 0;
     fromDate        = null;
     toDate          = null;
+    lastUpdate      = new Date();
     try {
       getAllInfo(object);
     } catch (JSONException e) {
@@ -42,6 +44,7 @@ public class Forecast {
     JSONArray listJSON  = root.getJSONArray("list");
     for(int i = 0; i < Math.min(listJSON.length(), 6); i++) {
       RainData rainData      = new RainData();
+
       JSONObject rawRainData = listJSON.getJSONObject(i);
       rainData.setAt(rawRainData.getInt("dt"));
 
@@ -50,6 +53,13 @@ public class Forecast {
         rainData.setVolume((float)rain.getDouble("3h"));
       } else {
         rainData.setVolume(0);
+      }
+
+      if (rawRainData.has("main")) {
+        JSONObject main = rawRainData.getJSONObject("main");
+        rainData.setTemperature((float)main.getDouble("temp"));
+      } else {
+        rainData.setTemperature(0);
       }
 
       totalRainVolume += rainData.getVolume();
@@ -98,5 +108,13 @@ public class Forecast {
 
   public boolean isNotFresh() {
     return !isFresh();
+  }
+
+  public Date getLastUpdate() {
+    return lastUpdate;
+  }
+
+  public ArrayList<RainData> getRainData() {
+    return data;
   }
 }

@@ -27,7 +27,6 @@ import macbury.umbrella.service.CheckWeatherService;
 public class ForecastActivity extends Activity {
   private static final String TAG = "ForecastActivity";
   private UmbrellaApplication app;
-  private Forecast currentForecast;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class ForecastActivity extends Activity {
     super.onResume();
     registerReceiver(syncReceiver, app.intents.syncBroadcastFilter());
 
-    currentForecast = app.store.getForecast();
+    Forecast currentForecast = app.store.getForecast();
 
     if (currentForecast == null || currentForecast.isNotFresh()) {
       app.services.checkWeather(false);
@@ -96,7 +95,6 @@ public class ForecastActivity extends Activity {
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .replace(R.id.container, forecastFragment)
             .commit();
-    forecastFragment.loadForecast();
   }
 
   SyncStatusBroadcastReceiver syncReceiver = new SyncStatusBroadcastReceiver() {
@@ -106,12 +104,10 @@ public class ForecastActivity extends Activity {
         startLoading();
       } else if(status == CheckWeatherService.SyncStatus.Error) {
         Log.e(TAG, "Status: " + status);
-        Toast.makeText(ForecastActivity.this, "Could not fetch data...", 2000);
+        Toast.makeText(ForecastActivity.this, "Could not fetch data...", Toast.LENGTH_LONG);
       } else {
         showForecast();
       }
     }
   };
-
-
 }

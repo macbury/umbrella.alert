@@ -7,5 +7,5 @@
     <string name="title_activity_forecast">Umbrella Alarm</string>
     <string name="action_refresh">Refresh</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="precipitation_card_title">Precipitation</string>
 </resources>

@@ -8,6 +8,8 @@ import java.util.Date;
 public class RainData {
   private float volume;
   private Date at;
+  private float temperature;
+  private int humidity = 0;
 
   public RainData() {
 
@@ -36,5 +38,21 @@ public class RainData {
 
   public boolean isRaining() {
     return volume > 0;
+  }
+
+  public float getTemperature() {
+    return temperature;
+  }
+
+  public void setTemperature(float temperature) {
+    this.temperature = temperature - 273.15f; // Convert to kelvins
+  }
+
+  public int getHumidity() {
+    return humidity;
+  }
+
+  public void setHumidity(int humidity) {
+    this.humidity = humidity;
   }
 }

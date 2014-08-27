@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="degreesBlueColor">#ff2980b9</color>
+  <color name="cityNameColor">#2c3e50</color>
+  <color name="lastUpdateColor">#7f8c8d</color>
+</resources>
