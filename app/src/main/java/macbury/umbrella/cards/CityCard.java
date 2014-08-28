@@ -1,6 +1,7 @@
 package macbury.umbrella.cards;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ public class CityCard extends Card {
     query                 = new AQuery(view);
     cityTextView          = query.id(R.id.cityTextView).getTextView();
     temperatureTextView   = query.id(R.id.temperatureTextView).getTextView();
+
+    Log.d(TAG, "Current city is: " + forecast.getCity());
 
     query.id(R.id.cityTextView).text(forecast.getCity());
     query.id(R.id.temperatureTextView).text(String.format("%.02f "+ DEGREES_SYMBOL + "C", forecast.getTemperature()));

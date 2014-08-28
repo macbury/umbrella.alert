@@ -9,6 +9,8 @@ import android.media.SoundPool;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
+import java.util.Date;
+
 import macbury.umbrella.R;
 import macbury.umbrella.UmbrellaApplication;
 
@@ -46,6 +48,18 @@ public class NotificationsManager {
 
     Notification notification = mBuilder.build();
     manager.notify(NOTIFICATION_TAKE_UMBRELLA_ID, notification);
+  }
+
+  public void syncWeatherNotification() {
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+    mBuilder.setSmallIcon(R.drawable.ic_launcher);
+    mBuilder.setContentTitle("synced");
+    Date date = new Date();
+    mBuilder.setContentText(date.toString());
+    mBuilder.setAutoCancel(true);
+
+    Notification notification = mBuilder.build();
+    manager.notify((int)date.getTime(), notification);
   }
 
   public void hideTakeUmbrella() {

@@ -31,10 +31,11 @@ public class ForecastProvider {
 
   private Forecast currentForecast;
 
-  private static final long  LOCATION_TIMEOUT   = 40 * 1000;
+  private static final long LOCATION_TIMEOUT    = 40 * 1000;
   private static final float LOCATION_ACCURACY  = 100;
   private static final float LOCATION_TOLERANCE = 10;
   private Location currentLocation;
+  private String currentCity;
 
   public ForecastProvider(Context context) {
     this.context = context;
@@ -66,24 +67,24 @@ public class ForecastProvider {
 
   private void fetchWeatherForecast() {
     Log.i(TAG, "Fetching current city...");
-    String city  = null;
+    currentCity  = null;
     String url   = null;
     Geocoder gcd = new Geocoder(context, Locale.getDefault());
     try {
       List<Address> addresses = gcd.getFromLocation(currentLocation.getLatitude(), currentLocation.getLongitude(), 1);
       if (addresses.size() > 0) {
-        city = addresses.get(0).getLocality();
+        currentCity = addresses.get(0).getLocality();
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    if (city == null) {
+    if (currentCity == null) {
       Log.i(TAG, "Fetching forecast for current location");
       url = "http://api.openweathermap.org/data/2.5/forecast?cnt=1&type=accurace&lat="+currentLocation.getLatitude()+"&lon="+currentLocation.getLongitude();
     } else {
-      Log.i(TAG, "Fetching forecast for current city: " + city);
-      url = "http://api.openweathermap.org/data/2.5/forecast?cnt=1&q="+city;
+      Log.i(TAG, "Fetching forecast for current city: " + currentCity);
+      url = "http://api.openweathermap.org/data/2.5/forecast?cnt=1&q="+currentCity;
     }
 
     Log.d(TAG, "GET: "+url);
@@ -98,6 +99,7 @@ public class ForecastProvider {
       Log.v(TAG, "Retrived forecast data: " + forecast.toString());
       currentForecast = new Forecast();
       currentForecast.parse(forecast);
+      currentForecast.setCityIfEmpty(currentCity);
       success();
     }
   }

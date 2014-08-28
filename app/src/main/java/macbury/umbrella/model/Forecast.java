@@ -43,7 +43,7 @@ public class Forecast {
 
   private void getAllInfo(JSONObject root) throws JSONException {
     JSONObject cityJson = root.getJSONObject("city");
-    city                = cityJson.getString("name");
+    this.city           = cityJson.getString("name");
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTimeInMillis(System.currentTimeMillis());
@@ -155,5 +155,12 @@ public class Forecast {
 
   public ArrayList<RainData> getRainData() {
     return data;
+  }
+
+
+  public void setCityIfEmpty(String currentCity) {
+    if (city == null || city.length() <= 1) {
+      city = currentCity;
+    }
   }
 }

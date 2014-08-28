@@ -84,6 +84,11 @@ public class ForecastActivity extends Activity {
       return true;
     }
 
+    if (id == R.id.action_settings) {
+      startActivity(new Intent(this, SettingsActivity.class));
+      return true;
+    }
+
     return super.onOptionsItemSelected(item);
   }
 

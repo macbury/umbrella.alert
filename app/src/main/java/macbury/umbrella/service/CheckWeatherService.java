@@ -63,6 +63,8 @@ public class CheckWeatherService extends Service implements ForecastProviderList
       app.store.setUmbrellaNotificationDismissed(false);
     }
 
+    //app.notifications.syncWeatherNotification(); //TODO: remove only for debug
+
     if (storedForecast == null || storedForecast.isNotFresh() || forceRefresh) {
       Log.i(TAG, "Starting command" );
       forecastProvider.fetch();

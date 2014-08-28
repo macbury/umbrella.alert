@@ -36,7 +36,7 @@
             android:enabled="true"
             android:exported="false" >
             <intent-filter>
-               <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
@@ -44,6 +44,15 @@
             android:enabled="true"
             android:exported="false" >
         </receiver>
+
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".activity.ForecastActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="macbury.umbrella.activity.ForecastActivity" />
+        </activity>
     </application>
 
 </manifest>
