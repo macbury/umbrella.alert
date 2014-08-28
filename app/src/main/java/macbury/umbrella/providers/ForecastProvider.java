@@ -1,6 +1,8 @@
 package macbury.umbrella.providers;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.util.Log;
 
@@ -9,6 +11,10 @@ import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.LocationAjaxCallback;
 
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import macbury.umbrella.model.Forecast;
 
@@ -59,8 +65,27 @@ public class ForecastProvider {
   }
 
   private void fetchWeatherForecast() {
-    Log.i(TAG, "Fetching forecast for current location");
-    String url = "http://api.openweathermap.org/data/2.5/forecast?cnt=1&type=accurace&lat="+currentLocation.getLatitude()+"&lon="+currentLocation.getLongitude();
+    Log.i(TAG, "Fetching current city...");
+    String city  = null;
+    String url   = null;
+    Geocoder gcd = new Geocoder(context, Locale.getDefault());
+    try {
+      List<Address> addresses = gcd.getFromLocation(currentLocation.getLatitude(), currentLocation.getLongitude(), 1);
+      if (addresses.size() > 0) {
+        city = addresses.get(0).getLocality();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    if (city == null) {
+      Log.i(TAG, "Fetching forecast for current location");
+      url = "http://api.openweathermap.org/data/2.5/forecast?cnt=1&type=accurace&lat="+currentLocation.getLatitude()+"&lon="+currentLocation.getLongitude();
+    } else {
+      Log.i(TAG, "Fetching forecast for current city: " + city);
+      url = "http://api.openweathermap.org/data/2.5/forecast?cnt=1&q="+city;
+    }
+
     Log.d(TAG, "GET: "+url);
     query.ajax(url, JSONObject.class, this, "forecastCallback");
   }

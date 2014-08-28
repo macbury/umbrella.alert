@@ -3,6 +3,7 @@ package macbury.umbrella.managers;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -16,7 +17,7 @@ import macbury.umbrella.receiver.CheckWeatherReceiver;
 public class AlarmsManager {
   private static final String TAG = "AlarmsManager";
   private final UmbrellaApplication application;
-  private final AlarmManager manager;
+  private AlarmManager manager;
 
   public AlarmsManager(UmbrellaApplication application) {
     this.application = application;
@@ -25,6 +26,9 @@ public class AlarmsManager {
 
   public void setup() {
     Log.i(TAG, "Setup alarms");
-    manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_HOUR, AlarmManager.INTERVAL_HALF_DAY, application.intents.checkWeatherReceiver());
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(System.currentTimeMillis());
+    calendar.set(Calendar.HOUR_OF_DAY, 7); // Read this from config etc...
+    manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, application.intents.checkWeatherReceiver());
   }
 }

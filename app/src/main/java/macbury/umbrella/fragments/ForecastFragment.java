@@ -14,6 +14,7 @@ import com.androidquery.AQuery;
 import it.gmariotti.cardslib.library.view.CardView;
 import macbury.umbrella.R;
 import macbury.umbrella.UmbrellaApplication;
+import macbury.umbrella.cards.AboutCard;
 import macbury.umbrella.cards.CityCard;
 import macbury.umbrella.cards.PrecipitationCard;
 import macbury.umbrella.model.Forecast;
@@ -62,5 +63,7 @@ public class ForecastFragment extends Fragment {
       cityCardView.setCard(new CityCard(getActivity(), currentForecast));
       chanceOfRain.setCard(new PrecipitationCard(getActivity(), currentForecast));
     }
+
+    //aboutCardView.setCard(new AboutCard(getActivity()));
   }
 }

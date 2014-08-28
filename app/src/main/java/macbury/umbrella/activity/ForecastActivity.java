@@ -5,6 +5,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +28,8 @@ import macbury.umbrella.service.CheckWeatherService;
 public class ForecastActivity extends Activity {
   private static final String TAG = "ForecastActivity";
   private UmbrellaApplication app;
-
+  private final static String ABOUT_PAGE_URL  = "http://macbury.ninja";
+  private final static String DONTAE_PAGE_URL = "http://macbury.ninja/donate/bitcoin";
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -71,7 +73,28 @@ public class ForecastActivity extends Activity {
       app.services.checkWeather(true);
       return true;
     }
+
+    if (id == R.id.action_about) {
+      openAboutPage();
+      return true;
+    }
+
+    if (id == R.id.action_donate) {
+      openDonationPage();
+      return true;
+    }
+
     return super.onOptionsItemSelected(item);
+  }
+
+  private void openDonationPage() {
+    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(DONTAE_PAGE_URL));
+    startActivity(browserIntent);
+  }
+
+  private void openAboutPage() {
+    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_PAGE_URL));
+    startActivity(browserIntent);
   }
 
   private void startLoading() {

@@ -1,5 +1,7 @@
 package macbury.umbrella.model;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -7,12 +9,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by macbury on 26.08.14.
  */
 public class Forecast {
+  private static final String TAG = "Forecast";
   private ArrayList<RainData> data;
   private Date fromDate;
   private Date toDate;
@@ -40,40 +44,75 @@ public class Forecast {
   private void getAllInfo(JSONObject root) throws JSONException {
     JSONObject cityJson = root.getJSONObject("city");
     city                = cityJson.getString("name");
-    
+
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(System.currentTimeMillis());
+    int currentDay    = calendar.get(Calendar.DAY_OF_YEAR);
+
     JSONArray listJSON  = root.getJSONArray("list");
-    for(int i = 0; i < Math.min(listJSON.length(), 6); i++) {
+    for(int i = 0; i < Math.min(listJSON.length(), 8); i++) {
       RainData rainData      = new RainData();
 
       JSONObject rawRainData = listJSON.getJSONObject(i);
       rainData.setAt(rawRainData.getInt("dt"));
+      calendar.setTime(rainData.getAt());
+      
+      if (calendar.get(Calendar.DAY_OF_YEAR) == currentDay) {
+        if (rawRainData.has("rain")) {
+          JSONObject rain = rawRainData.getJSONObject("rain");
+          rainData.setVolume((float)rain.getDouble("3h"));
+        } else {
+          rainData.setVolume(0);
+        }
 
-      if (rawRainData.has("rain")) {
-        JSONObject rain = rawRainData.getJSONObject("rain");
-        rainData.setVolume((float)rain.getDouble("3h"));
+        if (rawRainData.has("main")) {
+          JSONObject main = rawRainData.getJSONObject("main");
+          rainData.setTemperature((float)main.getDouble("temp"));
+          rainData.setHumidity(main.getInt("humidity"));
+        } else {
+          rainData.setTemperature(0);
+          rainData.setHumidity(0);
+        }
+
+        totalRainVolume += rainData.getVolume();
+
+        if (fromDate == null || rainData.getAt().before(fromDate)) {
+          fromDate = rainData.getAt();
+        }
+
+        if (toDate == null || rainData.getAt().after(toDate)) {
+          toDate   = rainData.getAt();
+        }
+
+        data.add(rainData);
       } else {
-        rainData.setVolume(0);
+        //Log.i(TAG, "Date: "+currentDay+" != "+calendar.get(Calendar.DAY_OF_YEAR));
       }
-
-      if (rawRainData.has("main")) {
-        JSONObject main = rawRainData.getJSONObject("main");
-        rainData.setTemperature((float)main.getDouble("temp"));
-      } else {
-        rainData.setTemperature(0);
-      }
-
-      totalRainVolume += rainData.getVolume();
-
-      if (fromDate == null || rainData.getAt().before(fromDate)) {
-        fromDate = rainData.getAt();
-      }
-
-      if (toDate == null || rainData.getAt().after(toDate)) {
-        toDate   = rainData.getAt();
-      }
-
-      data.add(rainData);
     }
+
+    calendar.setTime(fromDate);
+    calendar.set(Calendar.HOUR, 0);
+    calendar.set(Calendar.MINUTE, 0);
+    fromDate = calendar.getTime();
+
+    calendar.setTime(toDate);
+
+    calendar.set(Calendar.HOUR, calendar.getActualMaximum(Calendar.HOUR));
+    calendar.set(Calendar.MINUTE, calendar.getActualMaximum(Calendar.MINUTE));
+    toDate = calendar.getTime();
+
+    Log.i(TAG, "From: "+fromDate.toString()+" to "+toDate.toString());
+  }
+
+  public float getTemperature() {
+    Date currentDate = new Date();
+
+    for(RainData rd : data) {
+      if(currentDate.before(rd.getAt())) {
+        return rd.getTemperature();
+      }
+    }
+    return 0.0f;
   }
 
   public boolean takeUmbrella() {

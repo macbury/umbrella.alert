@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 
 import macbury.umbrella.UmbrellaApplication;
 import macbury.umbrella.activity.ForecastActivity;
+import macbury.umbrella.receiver.CheckWeatherReceiver;
 import macbury.umbrella.receiver.DissmisedTakeUmbrellaNotificationReceiver;
 import macbury.umbrella.service.CheckWeatherService;
 
@@ -38,7 +39,7 @@ public class IntentsManager {
   }
 
   public PendingIntent checkWeatherReceiver() {
-    Intent intent = new Intent(application, CheckWeatherService.class);
+    Intent intent = new Intent(application, CheckWeatherReceiver.class);
     return PendingIntent.getBroadcast(application, 0, intent, 0);
   }
 

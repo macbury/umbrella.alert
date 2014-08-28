@@ -12,7 +12,7 @@ import macbury.umbrella.model.Forecast;
  * Created by macbury on 27.08.14.
  */
 public class StoreManager {
-  private static final int CONFIG_VERSION                             = 80;
+  private static final int CONFIG_VERSION                             = 86;
   private static final String PREFERENCE_NAME                         = "PREFERENCE_NAME";
   private static final String KEY_FORECAST                            = "KEY_FORECAST";
   private static final String KEY_VERSION                             = "KEY_VERSION";

@@ -36,9 +36,8 @@ public class CityCard extends Card {
     cityTextView          = query.id(R.id.cityTextView).getTextView();
     temperatureTextView   = query.id(R.id.temperatureTextView).getTextView();
 
-
     query.id(R.id.cityTextView).text(forecast.getCity());
-    query.id(R.id.temperatureTextView).text("0 " + DEGREES_SYMBOL + "C");
+    query.id(R.id.temperatureTextView).text(String.format("%.02f "+ DEGREES_SYMBOL + "C", forecast.getTemperature()));
 
     SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
     query.id(R.id.updatedAtTextView).text(format.format(forecast.getLastUpdate()));

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 import macbury.umbrella.UmbrellaApplication;
@@ -14,10 +15,13 @@ import macbury.umbrella.providers.ForecastProviderError;
 import macbury.umbrella.providers.ForecastProviderListener;
 
 public class CheckWeatherService extends Service implements ForecastProviderListener {
-  private static final String TAG = "CheckWeatherService";
+  private static final String TAG           = "CheckWeatherService";
+  private static final String WAKE_LOCK_TAG = "de.macbury.WAKE_LOCK";
   private ForecastProvider forecastProvider;
   private Forecast currentForecast;
   private UmbrellaApplication app;
+  private PowerManager powerManager;
+  private PowerManager.WakeLock wakeLock;
 
   public enum SyncStatus {
     Started,
@@ -33,8 +37,12 @@ public class CheckWeatherService extends Service implements ForecastProviderList
   public void onCreate() {
     super.onCreate();
     Log.i(TAG, "Creating service...");
-    this.app         = (UmbrellaApplication)getApplication();
-    forecastProvider = new ForecastProvider(this);
+    this.powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+    this.wakeLock     = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG);
+    this.wakeLock.acquire();
+
+    this.app          = (UmbrellaApplication)getApplication();
+    forecastProvider  = new ForecastProvider(this);
     forecastProvider.setListener(this);
     setStatus(SyncStatus.Started);
   }
@@ -49,10 +57,14 @@ public class CheckWeatherService extends Service implements ForecastProviderList
 
     Forecast storedForecast = app.store.getForecast();
 
-    boolean forceRefresh = intent.getBooleanExtra(IntentsManager.EXTRA_FORCE_REFRESH, false);
+    boolean forceRefresh = intent != null && intent.getBooleanExtra(IntentsManager.EXTRA_FORCE_REFRESH, false);
 
-    if (storedForecast == null || !storedForecast.isFresh() || forceRefresh) {
-      Log.i(TAG, "Starting fetch: " + intent.getAction());
+    if (storedForecast == null || storedForecast.isNotFresh()) {
+      app.store.setUmbrellaNotificationDismissed(false);
+    }
+
+    if (storedForecast == null || storedForecast.isNotFresh() || forceRefresh) {
+      Log.i(TAG, "Starting command" );
       forecastProvider.fetch();
     } else if(!forecastProvider.isRunning()) {
       Log.i(TAG, "Fresh date skipping");
@@ -90,12 +102,12 @@ public class CheckWeatherService extends Service implements ForecastProviderList
     } else {
       app.notifications.hideTakeUmbrella();
     }
-    app.store.setUmbrellaNotificationDismissed(false);
   }
 
   @Override
   public void onDestroy() {
     Log.i(TAG, "Stopping service...");
+    wakeLock.release();
     super.onDestroy();
   }
 
